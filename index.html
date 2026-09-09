@@ -1245,6 +1245,17 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
         </div>
 
         <div class="field">
+  <label>Evento</label>
+  <input
+    id="dash-proceso"
+    class="form-control"
+    placeholder="Escribe evento..."
+    list="proceso-list">
+
+  <datalist id="proceso-list"></datalist>
+</div>
+
+        <div class="field">
           <label>Responsable</label>
           <input id="dash-resp" class="form-control" placeholder="Escribe responsable..." list="resp-list">
           <datalist id="resp-list"></datalist>
@@ -2166,7 +2177,13 @@ function bindUI() {
   document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
   document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', e => { if(e.target===ov) closeModal(ov.id); }));
 
-  const dashFilters = ['dash-area', 'dash-resp', 'dash-status', 'dash-month'];
+  const dashFilters = [
+  'dash-area',
+  'dash-proceso',
+  'dash-resp',
+  'dash-status',
+  'dash-month'
+];
 
   dashFilters.forEach(id => {
     document.getElementById(id)?.addEventListener('input', updateDashboard);
@@ -3070,10 +3087,19 @@ function getFilteredEvents() {
   const resp = document.getElementById('dash-resp')?.value.toLowerCase() || '';
   const status = document.getElementById('dash-status')?.value || '';
   const month = document.getElementById('dash-month')?.value;
+  const proceso =
+  document.getElementById('dash-proceso')
+  ?.value.toLowerCase() || '';
 
   return events.filter(ev => {
 
     if (area && !(ev.area || '').toLowerCase().includes(area)) return false;
+
+    if (
+  proceso &&
+  !(ev.proceso || '').toLowerCase().includes(proceso)
+)
+  return false;
 
     if (resp && !(ev.responsable || '').toLowerCase().includes(resp)) return false;
 
@@ -3094,19 +3120,34 @@ function updateDashboard() {
 }
 
 function loadAutocompleteOptions() {
-  const areas = new Set();
-  const respons = new Set();
+const areas = new Set();
+const respons = new Set();
+const procesos = new Set();
 
-  events.forEach(ev => {
-    if (ev.area) areas.add(ev.area);
-    if (ev.responsable) respons.add(ev.responsable);
-  });
+events.forEach(ev => {
+  if (ev.area) areas.add(ev.area);
+
+  if (ev.proceso)
+    procesos.add(ev.proceso);
+
+  if (ev.responsable)
+    respons.add(ev.responsable);
+});
 
   const areaList = document.getElementById('areas-list');
   areaList.innerHTML = [...areas]
     .sort()
     .map(a => `<option value="${a}">`)
     .join('');
+
+
+  const procesoList =
+  document.getElementById('proceso-list');
+
+procesoList.innerHTML = [...procesos]
+  .sort()
+  .map(p => `<option value="${p}">`)
+  .join('');
 
   const respList = document.getElementById('resp-list');
   respList.innerHTML = [...respons]
@@ -3120,6 +3161,7 @@ function clearDashboardFilters() {
   document.getElementById('dash-resp').value = '';
   document.getElementById('dash-status').value = '';
   document.getElementById('dash-month').value = '';
+  document.getElementById('dash-proceso').value = '';
 
   updateDashboard();
 }
