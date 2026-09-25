@@ -2285,11 +2285,22 @@ function getDateFilterClass(valor){
 }
 function matchesDateFilter(ev,campo,filtro){
   /*
-   * Cada selector de fecha debe evaluar exclusivamente su propia columna.
-   * No usamos resolveStatus() aquí porque ese estatus puede depender de la
-   * fecha extendida y terminar mezclando F. Compromiso con F. Extendida.
+   * Un evento CERRADO ya no participa en los filtros de vencimiento.
+   * Aunque su fecha original esté en el pasado o dentro de los próximos 3 días,
+   * debe considerarse concluido y no aparecer como ATRASADO o PRÓXIMO.
    */
   if(!filtro) return true;
+
+  const estatus = String(ev?.estatus || '').trim().toLowerCase();
+  const cerrado =
+    estatus === 'cerrado' ||
+    estatus === 'finalizado' ||
+    estatus === 'completado' ||
+    estatus === 'cumplido' ||
+    Boolean(ev?.fecha_cierre);
+
+  if(cerrado) return false;
+
   return getDateFilterClass(ev?.[campo]) === filtro;
 }
 
@@ -3417,7 +3428,6 @@ function showEmailStatus(msg, type) {
 }
 
 function evidencePending(ev) {
-  // La columna evidencia_estado no existe en Supabase; el estado se determina con evidencia_url/evidencia_filename y estatus.
   // La evidencia pendiente se identifica por: archivo cargado + evento aún no cerrado.
   return !!(ev?.evidencia_url && ev?.evidencia_filename && String(ev?.estatus || '').toLowerCase() !== 'cerrado');
 }
@@ -3572,8 +3582,152 @@ function loadAutocompleteOptions(){const a=new Set(),r=new Set(),p=new Set();eve
 function clearDashboardFilters(){['dash-area','dash-resp','dash-status','dash-month','dash-proceso'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});updateDashboard();}
 function updateDashboardCharts(data){const sc={atrasado:0,en_proceso:0,cerrado:0,pendiente_aprobacion:0,tbd:0},ac={},rc={},oa={},or={};data.forEach(ev=>{const st=resolveStatus(ev);if(sc[st]!==undefined)sc[st]++;const a=ev.area||'Sin área',r=ev.responsable||'Sin responsable';ac[a]=(ac[a]||0)+1;rc[r]=(rc[r]||0)+1;if(st==='atrasado'){oa[a]=(oa[a]||0)+1;or[r]=(or[r]||0)+1;}});const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};set('dash-total',data.length);set('dash-atrasado',sc.atrasado);set('dash-cerrado',sc.cerrado);set('dash-cumplimiento',(data.length?Math.round(sc.cerrado/data.length*100):0)+'%');renderChart('chart-status',sc,'doughnut');renderChart('chart-area',ac,'bar');renderChart('chart-resp',rc,'bar');renderChart('chart-overdue-area',oa,'bar');renderChart('chart-overdue-resp',or,'bar');renderMonthlyComplianceChart(data);}
 let dashCharts={};
-function renderChart(id,obj,type){const ctx=document.getElementById(id);if(!ctx||typeof Chart==='undefined')return;if(dashCharts[id])dashCharts[id].destroy();const e=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,10);dashCharts[id]=new Chart(ctx,{type,data:{labels:e.map(x=>x[0]),datasets:[{data:e.map(x=>x[1]),backgroundColor:['#CF002E','#E06000','#1E7E34','#1565C0','#6A0DAD','#FDD000','#7B8491','#8F001F','#2E7D32','#1769C2'],borderRadius:6,borderWidth:0}]},options:{indexAxis:type==='bar'?'y':undefined,responsive:true,maintainAspectRatio:false,cutout:type==='doughnut'?'65%':undefined,plugins:{legend:{display:type==='doughnut',position:'bottom'},datalabels:{display:true,color:'#fff',font:{weight:'700',size:11},formatter:v=>v}},scales:type==='bar'?{x:{beginAtZero:true,grid:{display:false},ticks:{precision:0}},y:{grid:{display:false}}}:{}}});}
-function renderMonthlyComplianceChart(data){const ctx=document.getElementById('chart-monthly-compliance');if(!ctx||typeof Chart==='undefined')return;if(dashCharts['chart-monthly-compliance'])dashCharts['chart-monthly-compliance'].destroy();const g={};data.forEach(ev=>{const t=parseFechaLocal(getFechaObjetivo(ev));if(!t)return;const k=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}`;if(!g[k])g[k]={total:0,aTiempo:0};g[k].total++;if(resolveStatus(ev)==='cerrado'){const c=parseFechaLocal(ev.fecha_cierre||ev.ultima_actualizacion);if(c&&c<=t)g[k].aTiempo++;}});const keys=Object.keys(g).sort().slice(-12),labels=keys.map(k=>{const[y,m]=k.split('-');return new Date(+y,+m-1,1).toLocaleDateString('es-MX',{month:'short',year:'2-digit'});}),vals=keys.map(k=>g[k].total?Math.round(g[k].aTiempo/g[k].total*100):0);dashCharts['chart-monthly-compliance']=new Chart(ctx,{type:'line',data:{labels,datasets:[{data:vals,borderColor:'#16763A',backgroundColor:'rgba(22,118,58,.12)',fill:true,tension:.3,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},plugins:{legend:{display:false},datalabels:{display:true,align:'top',color:'#16763A',font:{weight:'700'},formatter:v=>v+'%'}}}});}
+const dashboardValueLabelsPlugin = {
+  id: 'dashboardValueLabels',
+  afterDatasetsDraw(chart) {
+    const {ctx} = chart;
+    const type = chart.config.type;
+    const meta = chart.getDatasetMeta(0);
+    const data = chart.data.datasets[0]?.data || [];
+    if (!meta || !data.length) return;
+
+    ctx.save();
+    ctx.font = '700 12px DM Sans, Arial, sans-serif';
+    ctx.textBaseline = 'middle';
+
+    if (type === 'doughnut') {
+      const total = data.reduce((a,b) => a + Number(b || 0), 0);
+      meta.data.forEach((arc, i) => {
+        const value = Number(data[i] || 0);
+        if (!value || !arc) return;
+        const fraction = total ? value / total : 0;
+        // Evita amontonar números en segmentos demasiado pequeños.
+        if (fraction < 0.07) return;
+        const angle = (arc.startAngle + arc.endAngle) / 2;
+        const radius = (arc.innerRadius + arc.outerRadius) / 2;
+        const x = arc.x + Math.cos(angle) * radius;
+        const y = arc.y + Math.sin(angle) * radius;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(value), x, y);
+      });
+    } else if (type === 'bar') {
+      meta.data.forEach((bar, i) => {
+        const value = Number(data[i] || 0);
+        if (!value || !bar) return;
+        ctx.fillStyle = '#2B3138';
+        ctx.textAlign = 'left';
+        ctx.fillText(String(value), bar.x + 8, bar.y);
+      });
+    }
+    ctx.restore();
+  }
+};
+
+function renderChart(id,obj,type){
+  const ctx=document.getElementById(id);
+  if(!ctx||typeof Chart==='undefined')return;
+  if(dashCharts[id])dashCharts[id].destroy();
+
+  const entries=Object.entries(obj)
+    .filter(([,v]) => Number(v) > 0)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,10);
+
+  if(!entries.length){
+    const parent=ctx.parentElement;
+    if(parent) parent.innerHTML='<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#8A929D;font-size:13px"><i class="fas fa-chart-bar" style="margin-right:8px"></i>Sin datos para mostrar</div>';
+    return;
+  }
+
+  const labels=entries.map(x=>x[0]);
+  const values=entries.map(x=>Number(x[1]));
+  const palette=['#CF002E','#E06000','#1E7E34','#1565C0','#6A0DAD','#FDD000','#7B8491','#8F001F','#2E7D32','#1769C2'];
+
+  dashCharts[id]=new Chart(ctx,{
+    type,
+    data:{
+      labels,
+      datasets:[{
+        data:values,
+        backgroundColor:palette.slice(0,values.length),
+        borderRadius:7,
+        borderWidth:0,
+        maxBarThickness:28,
+        categoryPercentage:.72,
+        barPercentage:.78
+      }]
+    },
+    plugins:[dashboardValueLabelsPlugin],
+    options:{
+      indexAxis:type==='bar'?'y':undefined,
+      responsive:true,
+      maintainAspectRatio:false,
+      animation:{duration:500},
+      layout:{padding:type==='bar'?{left:4,right:34,top:6,bottom:6}:{top:8,bottom:8,left:8,right:8}},
+      cutout:type==='doughnut'?'68%':undefined,
+      plugins:{
+        legend:type==='doughnut'?{
+          display:true,
+          position:'bottom',
+          labels:{
+            usePointStyle:true,
+            pointStyle:'circle',
+            padding:13,
+            boxWidth:9,
+            font:{size:11,family:"'DM Sans',sans-serif"}
+          }
+        }:{display:false},
+        tooltip:{
+          callbacks:{
+            label(c){
+              const total=values.reduce((a,b)=>a+b,0);
+              const v=Number(c.raw||0);
+              return `${c.label}: ${v} · ${total?Math.round(v/total*100):0}%`;
+            }
+          }
+        }
+      },
+      scales:type==='bar'?{
+        x:{beginAtZero:true,grid:{color:'rgba(0,0,0,.06)'},ticks:{precision:0,font:{size:10}}},
+        y:{grid:{display:false},ticks:{font:{size:10},autoSkip:false,maxTicksLimit:10}}
+      }:{}
+    }
+  });
+}
+
+function renderMonthlyComplianceChart(data){
+  const ctx=document.getElementById('chart-monthly-compliance');
+  if(!ctx||typeof Chart==='undefined')return;
+  if(dashCharts['chart-monthly-compliance'])dashCharts['chart-monthly-compliance'].destroy();
+  const g={};
+  data.forEach(ev=>{
+    const t=parseFechaLocal(getFechaObjetivo(ev));
+    if(!t)return;
+    const k=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}`;
+    if(!g[k])g[k]={total:0,aTiempo:0};
+    g[k].total++;
+    if(resolveStatus(ev)==='cerrado'){
+      const c=parseFechaLocal(ev.fecha_cierre||ev.ultima_actualizacion);
+      if(c&&c<=t)g[k].aTiempo++;
+    }
+  });
+  const keys=Object.keys(g).sort().slice(-12);
+  const labels=keys.map(k=>{const[y,m]=k.split('-');return new Date(+y,+m-1,1).toLocaleDateString('es-MX',{month:'short',year:'2-digit'});});
+  const vals=keys.map(k=>g[k].total?Math.round(g[k].aTiempo/g[k].total*100):0);
+  dashCharts['chart-monthly-compliance']=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{data:vals,borderColor:'#16763A',backgroundColor:'rgba(22,118,58,.12)',fill:true,tension:.3,pointRadius:4,pointHoverRadius:6}]},
+    plugins:[dashboardValueLabelsPlugin],
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      layout:{padding:{top:18,right:10,left:8,bottom:4}},
+      scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.06)'}},x:{grid:{display:false},ticks:{font:{size:10}}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw}%`}}}
+    }
+  });
+}
 
 async function generarNuevoId() {
   const numeros = events.map(function(ev) {
