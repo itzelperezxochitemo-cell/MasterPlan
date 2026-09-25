@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -119,7 +119,7 @@ body{
 }
 .btn-logout:hover { background: var(--red-dark); }
 
-.container { max-width: 1520px; margin: 0 auto; padding: 0 24px; }
+.container { max-width: 1800px; width: calc(100% - 24px); margin: 0 auto; padding: 0 12px; box-sizing: border-box; }
 
 .stats-row {
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
@@ -336,6 +336,10 @@ td:nth-child(5), td:nth-child(6), td:nth-child(10) { max-width: 100%; }
 .badge-atrasado { background: #FDECEA; color: #C62828; }
 .badge-proceso { background: #FFF3E0; color: #E06000; }
 .badge-tbd { background: #E3EEF9; color: #1565C0; }
+.badge-pendiente { background:#FFF4CC; color:#8A5A00; border:1px solid #F1D77A; }
+.row-pending-approval { background:linear-gradient(90deg,#FFFBEA 0%,#FFFFFF 72%) !important; }
+.row-pending-approval td { border-top:2px solid #F1D77A !important; border-bottom:1px solid #F5E7B0 !important; }
+.pending-evidence-note{display:flex;align-items:center;gap:5px;justify-content:center;margin-top:5px;padding:5px 7px;border-radius:7px;background:#FFF8DF;border:1px solid #F1D77A;color:#8A5A00;font-size:9px;font-weight:700;line-height:1.2;text-align:center}
 .badge-mayor { background: #eb660e; color: #ffffff; }
 .badge-menor { background: #dce5f5; color: #6B7280; }
 .badge-critica { background: #d41b06; color: #ffffff; }
@@ -731,7 +735,7 @@ body{
 }
 .hero-strip p{position:relative;z-index:1;color:#6B5200}
 
-.container{max-width:1540px;padding:0 28px}
+.container{max-width:1800px;width:calc(100% - 24px);padding:0 12px;box-sizing:border-box}
 .wrap{max-width:1280px;padding:24px}
 .section-head{padding:24px 0 12px}
 .section-title{font-size:19px}
@@ -1054,7 +1058,7 @@ tbody tr:hover{
 .search-suggestion .suggestion-main{font-weight:600;word-break:break-word}
 .search-suggestion .suggestion-meta{font-size:10px;color:var(--text3);margin-left:auto;white-space:nowrap}
 .table-wrap{overflow-x:auto!important;overflow-y:visible!important}
-.table-wrap table{min-width:1580px}
+.table-wrap table{width:100%;min-width:1320px}
 .col-actions{width:90px!important;min-width:90px!important}
 .actions-cell{
     display:flex !important;
@@ -1070,10 +1074,339 @@ td:last-child>div>div:last-child{display:flex!important;flex-wrap:wrap!important
 td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white-space:nowrap}
 .toolbar-actions .btn{min-height:38px;flex:0 0 auto}
 .btn{overflow:visible;text-overflow:clip}
-@media(max-width:900px){.table-wrap table{min-width:1500px}.col-actions{width:175px!important;min-width:175px!important}.actions-cell{grid-template-columns:repeat(3,minmax(32px,1fr))}}
-@media(max-width:600px){.table-wrap table{min-width:1420px}.col-actions{width:160px!important;min-width:160px!important}.actions-cell{grid-template-columns:repeat(3,minmax(30px,1fr));gap:5px!important}.actions-cell .btn{height:32px!important;min-height:32px!important}}
+@media(max-width:900px){.table-wrap table{min-width:1320px}.col-actions{width:175px!important;min-width:175px!important}.actions-cell{grid-template-columns:repeat(3,minmax(32px,1fr))}}
+@media(max-width:600px){.table-wrap table{min-width:1320px}.col-actions{width:160px!important;min-width:160px!important}.actions-cell{grid-template-columns:repeat(3,minmax(30px,1fr));gap:5px!important}.actions-cell .btn{height:32px!important;min-height:32px!important}}
 
 </style>
+<style id="final-layout-fixes">
+.container{max-width:none!important;width:100%!important;padding-left:14px!important;padding-right:14px!important}
+.table-wrap{width:100%!important}
+.table-wrap table{width:100%!important;min-width:1480px}
+#dashboard-panel .charts{grid-template-columns:repeat(3,minmax(0,1fr))}
+.effectiveness-cell{display:flex;flex-direction:column;gap:7px;min-width:145px}
+.effectiveness-date{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;background:#F7F8FA;border:1px solid #E2E6EA;font-size:10px;color:#59636F}
+.effectiveness-actions{display:flex;gap:5px;flex-wrap:wrap}
+.effectiveness-actions .btn{flex:1 1 auto;min-width:34px!important;width:auto!important}
+.status-detail{display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.15}
+.status-detail small{font-size:9px;font-weight:600;color:var(--text3);white-space:normal;text-align:center}
+.date-filter{width:100%;min-width:92px;padding:5px!important;font-size:10px!important}
+@media(max-width:1200px){#dashboard-panel .charts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){#dashboard-panel .charts{grid-template-columns:1fr}.container{padding-left:8px!important;padding-right:8px!important}}
+</style>
+
+<style id="visual-refresh-2026">
+/* =========================================================
+   MASTER PLAN · REFRESH VISUAL
+   Solo presentación: no cambia IDs, funciones, eventos, Supabase
+   ni la estructura funcional del sistema.
+   ========================================================= */
+:root{
+  --ui-red:#C9002B;
+  --ui-red-dark:#8F001F;
+  --ui-gold:#F2C400;
+  --ui-gold-soft:#FFF8D6;
+  --ui-line:#E6E8EC;
+  --ui-muted:#6B7280;
+  --ui-ink:#20242A;
+  --ui-surface:#FFFFFF;
+}
+
+body{
+  background:#F5F6F8 !important;
+  color:var(--ui-ink);
+}
+
+/* ---------- Encabezado ---------- */
+.site-header,
+.admin-topbar{
+  background:rgba(255,255,255,.97) !important;
+  border-bottom:3px solid var(--ui-red) !important;
+  box-shadow:0 2px 12px rgba(24,30,40,.08) !important;
+  backdrop-filter:blur(8px);
+}
+.site-header .inner,
+.admin-topbar .inner{
+  height:62px !important;
+}
+.brand-name{color:var(--ui-red-dark) !important;}
+.brand-sub{color:#6B7280 !important;}
+.brand-icon{
+  box-shadow:0 3px 8px rgba(201,0,43,.22) !important;
+}
+.btn-admin,
+.btn-logout{
+  border-radius:9px !important;
+  box-shadow:0 2px 6px rgba(201,0,43,.16);
+}
+
+/* ---------- Franja de título ---------- */
+.hero-strip{
+  background:linear-gradient(100deg,#FFF8D6 0%,#FFFDF1 62%,#FFFFFF 100%) !important;
+  color:var(--ui-red-dark) !important;
+  padding:20px 0 18px !important;
+  border-bottom:1px solid #E8D37A !important;
+}
+.hero-strip h1{
+  font-size:27px !important;
+  letter-spacing:-.6px !important;
+  margin-bottom:5px !important;
+}
+.hero-strip p{
+  color:#6B5A00 !important;
+  font-size:12px !important;
+}
+
+/* ---------- Contenedor y filtros ---------- */
+.container{
+  max-width:none !important;
+  width:100% !important;
+  padding-left:18px !important;
+  padding-right:18px !important;
+}
+.toolbar{
+  margin-top:16px !important;
+  padding:11px 14px !important;
+  border:1px solid #E1E4E8 !important;
+  border-radius:12px !important;
+  background:#FFFFFF !important;
+  box-shadow:0 3px 12px rgba(25,32,45,.055) !important;
+}
+.filter-pills{gap:7px !important;}
+.pill{
+  min-height:32px;
+  padding:7px 14px !important;
+  border:1px solid #D9DDE3 !important;
+  background:#F7F8FA !important;
+  color:#59636F !important;
+  border-radius:18px !important;
+  font-size:11px !important;
+  box-shadow:none !important;
+}
+.pill:hover{
+  background:#FFF8E0 !important;
+  border-color:#D8B500 !important;
+  color:var(--ui-red-dark) !important;
+}
+.pill.active{
+  background:var(--ui-red) !important;
+  border-color:var(--ui-red) !important;
+  color:#FFF !important;
+  box-shadow:0 3px 8px rgba(201,0,43,.18) !important;
+}
+
+/* ---------- Tabla: más limpia y con columnas controladas ---------- */
+.table-wrap{
+  margin-top:12px !important;
+  border:1px solid #DDE1E6 !important;
+  border-radius:12px !important;
+  background:#FFF !important;
+  box-shadow:0 5px 18px rgba(24,30,40,.07) !important;
+  overflow-x:auto !important;
+  overflow-y:visible !important;
+}
+.table-wrap table{
+  width:100% !important;
+  min-width:1480px !important;
+  table-layout:fixed !important;
+}
+
+/* 14 columnas = 100%. La última queda limitada al 10% y deja de crecer. */
+th:nth-child(1),td:nth-child(1){width:4% !important;}
+th:nth-child(2),td:nth-child(2){width:8% !important;}
+th:nth-child(3),td:nth-child(3){width:6% !important;}
+th:nth-child(4),td:nth-child(4){width:5% !important;}
+th:nth-child(5),td:nth-child(5){width:10% !important;}
+th:nth-child(6),td:nth-child(6){width:11% !important;}
+th:nth-child(7),td:nth-child(7){width:7% !important;}
+th:nth-child(8),td:nth-child(8){width:6% !important;}
+th:nth-child(9),td:nth-child(9){width:6% !important;}
+th:nth-child(10),td:nth-child(10){width:6% !important;}
+th:nth-child(11),td:nth-child(11){width:8% !important;}
+th:nth-child(12),td:nth-child(12){width:7% !important;}
+th:nth-child(13),td:nth-child(13){width:6% !important;}
+th:nth-child(14),td:nth-child(14){width:10% !important;}
+
+.table-wrap thead{
+  background:#FFF9DF !important;
+}
+.table-wrap th{
+  height:44px !important;
+  padding:7px 5px !important;
+  background:#FFF9DF !important;
+  color:#6D5900 !important;
+  border-bottom:2px solid #D6B300 !important;
+  border-right:1px solid #E8E5D5 !important;
+  font-size:9px !important;
+  letter-spacing:.45px !important;
+  line-height:1.25 !important;
+}
+.table-wrap td{
+  padding:7px 7px !important;
+  border-bottom:1px solid #ECEEF1 !important;
+  border-right:1px solid #F0F1F3 !important;
+  color:#30343A;
+  font-size:11px !important;
+}
+.table-wrap tbody tr:nth-child(even){background:#FAFBFC;}
+.table-wrap tbody tr:nth-child(odd){background:#FFFFFF;}
+.table-wrap tbody tr:hover{
+  background:#FFFBEA !important;
+  transform:none !important;
+  box-shadow:inset 3px 0 0 #E1BD00 !important;
+}
+
+/* Texto largo: mantiene la tabla compacta */
+.cell-text{
+  font-size:11px !important;
+  line-height:1.3 !important;
+  overflow:hidden;
+  word-break:break-word;
+}
+.cell-text-short{
+  font-size:11px !important;
+  max-width:100% !important;
+}
+.cell-text.expanded{
+  max-width:100% !important;
+}
+
+/* ---------- ID / criticidad / estatus ---------- */
+.id-badge{
+  font-size:10px !important;
+  padding:3px 6px !important;
+  border-radius:6px !important;
+  background:#FFF8D6 !important;
+}
+.badge{
+  font-size:9px !important;
+  padding:4px 7px !important;
+  border-radius:10px !important;
+  line-height:1.15 !important;
+}
+.col-status{text-align:center !important;}
+.status-detail small{font-size:8px !important;}
+
+/* ---------- Fechas ---------- */
+.col-date{font-size:9px !important;}
+.table-wrap td:nth-child(8),
+.table-wrap td:nth-child(9),
+.table-wrap td:nth-child(10){
+  text-align:center !important;
+}
+
+/* ---------- Acciones: botones compactos ---------- */
+.col-actions{width:6% !important;min-width:0 !important;}
+.actions-cell{
+  max-width:100% !important;
+  gap:4px !important;
+  justify-content:center !important;
+}
+.actions-cell .btn{
+  width:30px !important;
+  min-width:30px !important;
+  height:30px !important;
+  min-height:30px !important;
+  padding:0 !important;
+  border-radius:7px !important;
+}
+
+/* ---------- Chequeo de efectividad: ancho fijo y visual compacto ---------- */
+th:last-child,
+td:last-child{
+  width:10% !important;
+  min-width:148px !important;
+  max-width:148px !important;
+}
+.effectiveness-cell{
+  min-width:0 !important;
+  width:100% !important;
+  gap:5px !important;
+}
+.effectiveness-date{
+  min-width:0 !important;
+  width:100% !important;
+  padding:5px 6px !important;
+  gap:5px !important;
+  border-radius:7px !important;
+  background:#F6F7F9 !important;
+  border:1px solid #E1E4E8 !important;
+  font-size:9px !important;
+  line-height:1.2 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.effectiveness-date strong{font-size:9px !important;}
+.effectiveness-actions{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  gap:4px !important;
+  width:100% !important;
+}
+.effectiveness-actions .btn{
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  width:auto !important;
+  height:29px !important;
+  min-height:29px !important;
+  padding:4px 6px !important;
+  border-radius:7px !important;
+  font-size:9px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.effectiveness-actions .btn i{font-size:10px !important;}
+
+/* ---------- Filtros de fecha en encabezado ---------- */
+.date-filter{
+  min-width:0 !important;
+  width:100% !important;
+  padding:5px 3px !important;
+  font-size:8px !important;
+  border-radius:6px !important;
+}
+
+/* ---------- Panel administrativo ---------- */
+.admin-topbar .inner{height:58px !important;}
+#admin-panel .toolbar{
+  margin-bottom:10px !important;
+}
+#admin-panel .toolbar-actions{
+  gap:6px !important;
+}
+#admin-panel .toolbar-actions .btn{
+  min-height:34px !important;
+  padding:7px 11px !important;
+  font-size:11px !important;
+  border-radius:8px !important;
+}
+
+/* ---------- Espaciado general ---------- */
+#public-panel .container > .table-wrap,
+#admin-panel .container > .table-wrap{
+  margin-bottom:18px !important;
+}
+
+@media(max-width:900px){
+  .container{padding-left:10px !important;padding-right:10px !important;}
+  .hero-strip{padding:16px 0 !important;}
+  .hero-strip h1{font-size:22px !important;}
+  .table-wrap table{min-width:1480px !important;}
+  th:last-child,td:last-child{min-width:148px !important;max-width:148px !important;}
+}
+
+@media(max-width:600px){
+  .site-header .inner,.admin-topbar .inner{height:58px !important;padding:0 12px !important;gap:10px !important;}
+  .brand-name{font-size:13px !important;}
+  .brand-sub{font-size:8px !important;}
+  .btn-admin,.btn-logout{padding:7px 9px !important;font-size:10px !important;}
+  .hero-strip h1{font-size:20px !important;}
+  .hero-strip p{font-size:10px !important;}
+  .toolbar{padding:9px !important;}
+}
+</style>
+
 </head>
 <body>
 
@@ -1102,19 +1435,12 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
 
   <div class="container">
     <div class="toolbar" style="margin-top:20px">
-      <div class="search-wrap">
-        <i class="fas fa-search"></i>
-        <input type="text"
-       id="search-input"
-       placeholder="Buscar por ID, proceso, área, responsable…">
-
-        <div id="search-suggestions" class="search-suggestions"></div>
-      </div>
       <div class="filter-pills">
         <button class="pill active" data-filter="all">Todos</button>
         <button class="pill" data-filter="atrasado">Atrasados</button>
         <button class="pill" data-filter="en_proceso">En Proceso</button>
         <button class="pill" data-filter="cerrado">Cerrados</button>
+        <button class="pill" data-filter="pendiente_aprobacion">Pendientes</button>
         <button class="pill" data-filter="tbd">TBD</button>
       </div>
     </div>
@@ -1131,15 +1457,34 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
             <th>Plan de acción</th>
             <th>Responsable</th>
             <th class="col-date">F. Compromiso</th>
+            <th class="col-date">
+  F. Extendida
+</th>
             <th class="col-date">Actualización</th>
             <th>Observación</th>
             <th class="col-status">Estatus</th>
             <th class="col-actions">Acciones</th>
             <th>Chequeo de efectividad</th>
-          </tr>
-        </thead>
+</tr>
+
+<tr id="pub-filter-row">
+  <th><input id="pub-id-filter" class="form-control" placeholder="ID"></th>
+  <th><input id="pub-proceso-filter" class="form-control" placeholder="Proceso"></th>
+  <th><input id="pub-area-filter" class="form-control" placeholder="Área"></th>
+  <th><input id="pub-criticidad-filter" class="form-control" placeholder="Criticidad"></th>
+  <th></th><th></th>
+  <th><input id="pub-responsable-filter" class="form-control" placeholder="Responsable"></th>
+  <th><select id="pub-compromiso-filter" class="form-control date-filter"><option value="">F. Compromiso · Todos</option><option value="normal">Normal</option><option value="proximo">Próximo a vencer</option><option value="atrasado">Atrasado</option></select></th>
+  <th><select id="pub-extendida-filter" class="form-control date-filter"><option value="">F. Extendida · Todos</option><option value="normal">Normal</option><option value="proximo">Próximo a vencer</option><option value="atrasado">Atrasado</option></select></th>
+  <th></th>
+  <th></th>
+  <th><select id="pub-estatus-filter" class="form-control"><option value="">Estatus · Todos</option><option value="atrasado">Atrasado</option><option value="en_proceso">En proceso</option><option value="cerrado">Cerrado</option><option value="pendiente_aprobacion">Pendiente de aprobación</option><option value="tbd">TBD</option></select></th>
+  <th></th><th></th>
+</tr>
+
+</thead>
         <tbody id="pub-body">
-          <tr class="state-row"><td colspan="13"><div class="spinner"></div>Cargando eventos…</td></tr>
+          <tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>
         </tbody>
       </table>
     </div>
@@ -1159,16 +1504,12 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
 
   <div class="container">
     <div class="toolbar" style="margin-top:16px">
-      <div class="search-wrap">
-        <i class="fas fa-search"></i>
-        <input type="text" id="admin-search-input" placeholder="Buscar por ID, proceso, área, responsable…" autocomplete="off">
-        <div id="admin-search-suggestions" class="search-suggestions"></div>
-      </div>
       <div class="filter-pills" id="admin-pills">
         <button class="pill active" data-filter="all">Todos</button>
         <button class="pill" data-filter="atrasado">Atrasados</button>
         <button class="pill" data-filter="en_proceso">En Proceso</button>
         <button class="pill" data-filter="cerrado">Cerrados</button>
+        <button class="pill" data-filter="pendiente_aprobacion">Pendientes</button>
         <button class="pill" data-filter="tbd">TBD</button>
       </div>
       <div class="toolbar-actions">
@@ -1182,27 +1523,46 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
     </div>
 
     <div class="table-wrap">
-      <table id="admin-table">
-        <thead>
-          <tr>
-            <th class="col-id">ID</th>
-            <th>Proceso</th>
-            <th class="col-area">Área</th>
-            <th class="col-critic">Criticidad</th>
-            <th>Descripción</th>
-            <th>Plan de acción</th>
-            <th>Responsable</th>
-            <th class="col-date">F. Compromiso</th>
-            <th class="col-date">Actualización</th>
-            <th>Observación</th>
-            <th class="col-status">Estatus</th>
-            <th class="col-actions">Acciones</th>
-            <th>Chequeo de efectividad</th>
-          </tr>
-        </thead>
-        <tbody id="admin-body">
-          <tr class="state-row"><td colspan="13"><div class="spinner"></div>Cargando eventos…</td></tr>
-        </tbody>
+<table id="admin-table">
+
+<thead>
+
+<tr>
+  <th class="col-id">ID</th>
+  <th>Proceso</th>
+  <th class="col-area">Área</th>
+  <th class="col-critic">Criticidad</th>
+  <th>Descripción</th>
+  <th>Plan de acción</th>
+  <th>Responsable</th>
+  <th class="col-date">F. Compromiso</th>
+  <th class="col-date">F. Extendida</th>
+  <th class="col-date">Actualización</th>
+  <th>Observación</th>
+  <th class="col-status">Estatus</th>
+  <th class="col-actions">Acciones</th>
+  <th>Chequeo de efectividad</th>
+</tr>
+
+<tr id="admin-filter-row">
+  <th><input id="admin-id-filter" class="form-control" placeholder="ID"></th>
+  <th><input id="admin-proceso-filter" class="form-control" placeholder="Proceso"></th>
+  <th><input id="admin-area-filter" class="form-control" placeholder="Área"></th>
+  <th><input id="admin-criticidad-filter" class="form-control" placeholder="Criticidad"></th>
+  <th></th><th></th>
+  <th><input id="admin-responsable-filter" class="form-control" placeholder="Responsable"></th>
+  <th><select id="admin-compromiso-filter" class="form-control date-filter"><option value="">F. Compromiso · Todos</option><option value="normal">Normal</option><option value="proximo">Próximo a vencer</option><option value="atrasado">Atrasado</option></select></th>
+  <th><select id="admin-extendida-filter" class="form-control date-filter"><option value="">F. Extendida · Todos</option><option value="normal">Normal</option><option value="proximo">Próximo a vencer</option><option value="atrasado">Atrasado</option></select></th>
+  <th></th>
+  <th></th>
+  <th><select id="admin-estatus-filter" class="form-control"><option value="">Estatus · Todos</option><option value="atrasado">Atrasado</option><option value="en_proceso">En proceso</option><option value="cerrado">Cerrado</option><option value="pendiente_aprobacion">Pendiente de aprobación</option><option value="tbd">TBD</option></select></th>
+  <th></th><th></th>
+</tr>
+
+</thead>
+<tbody id="admin-body">
+  <tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>
+</tbody>
       </table>
     </div>
   </div>
@@ -1268,6 +1628,7 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
             <option value="atrasado">Atrasado</option>
             <option value="en_proceso">En Proceso</option>
             <option value="cerrado">Cerrado</option>
+             <option value="pendiente_aprobacion">Pendiente de aprobación</option>
             <option value="tbd">TBD</option>
           </select>
         </div>
@@ -1353,6 +1714,9 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
         <canvas id="chart-resp"></canvas>
       </div>
     </div>
+    <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#E53935"></span> Atrasados por área ofensora</div><div class="chart-wrap"><canvas id="chart-overdue-area"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#D95F00"></span> Atrasados por responsable</div><div class="chart-wrap"><canvas id="chart-overdue-resp"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title"><span class="dot" style="background:#16763A"></span> % de cumplimiento mensual</div><div class="chart-wrap"><canvas id="chart-monthly-compliance"></canvas></div></div>
 
   </div>
 
@@ -1398,16 +1762,20 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
         <p>Arrastra o haz clic para seleccionar</p>
         <div class="file-types">
           <span class="file-type-tag">PDF</span>
-          <span class="file-type-tag">JPG</span>
+          <span class="file-type-tag">JPG/JPEG</span>
           <span class="file-type-tag">PNG</span>
-          <span class="file-type-tag">DOCX</span>
-          <span class="file-type-tag">DOC</span>
           <span class="file-type-tag">WEBP</span>
-          <span class="file-type-tag">EML</span>
+          <span class="file-type-tag">DOC/DOCX</span>
+          <span class="file-type-tag">XLS/XLSX</span>
+          <span class="file-type-tag">PPT/PPTX</span>
+          <span class="file-type-tag">CSV</span>
+          <span class="file-type-tag">TXT</span>
+          <span class="file-type-tag">ZIP/RAR/7Z</span>
+          <span class="file-type-tag">MSG/EML</span>
         </div>
-        <small>Tamaño máximo: 25 MB · Ahora puedes subir correos (.eml)</small>
+        <small>Tamaño máximo: 25 MB · Se valida por extensión y se envía con el tipo MIME correcto</small>
       </div>
-      <input type="file" id="evidence-file" accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.eml,application/pdf,image/*,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,message/rfc822" style="display:none">
+      <input type="file" id="evidence-file" accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.zip,.rar,.7z,.msg,.eml" style="display:none">
       <div id="file-preview" style="margin-top:10px;display:none"></div>
       <div id="upload-notice" style="margin-top:10px"></div>
       <button id="upload-submit" class="btn btn-primary" style="width:100%;margin-top:14px;justify-content:center">
@@ -1524,6 +1892,20 @@ td:last-child .btn{min-height:32px;padding:7px 10px;justify-content:center;white
             <input type="date" id="f-fecha" class="form-control" required>
             <div class="date-note"><i class="fas fa-info-circle"></i> </div>
           </div>
+          <div class="form-group">
+  <label class="form-label">
+    Fecha extendida
+  </label>
+
+  <input
+    type="date"
+    id="f-fecha-extendida"
+    class="form-control">
+
+  <div class="date-note">
+    Utilizar únicamente cuando se apruebe una extensión.
+  </div>
+</div>
           <div class="form-group">
             <label class="form-label">Estatus</label>
             <select id="f-estatus" class="form-control" required>
@@ -1811,7 +2193,8 @@ const RECIPIENTS = [
 { id:21, name:'Aguilar, Brandon', email:'aguilarflores.bb@pg.com' },
 { id:22, name:'Lopez, Brandon', email:'lopezsanchez.bl@pg.com' },
 { id:23, name:'Ortiz, Berlin', email:'ortizcastro.nb@pg.com' },
-{ id:24, name:'Fuentes, Yael', email:'fuentesramos.hy@pg.com' }
+{ id:24, name:'Fuentes, Yael', email:'fuentesramos.hy@pg.com' },
+{ id:24, name:'Torres, Erick', email:'erickivan.torresalvarado@dhl.com' }
 ];
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1822,54 +2205,185 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function initSupabase() {
   try {
-    if (typeof supabase === 'undefined') return;
+    if (typeof supabase === 'undefined') {
+      throw new Error('No se cargó la librería de Supabase. Verifica tu conexión a Internet.');
+    }
     sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    await sb.from('eventos').select('count').limit(1).single();
-  } catch(e) { console.warn('Supabase init error:', e); sb = null; }
+    console.info('Supabase inicializado correctamente.');
+  } catch(e) {
+    console.error('Supabase init error:', e);
+    sb = null;
+    const body = document.getElementById('pub-body');
+    if (body) setBodyError('pub-body', 'No fue posible inicializar Supabase: ' + e.message);
+  }
 }
 
 async function loadPublicData() {
   setBodyLoading('pub-body');
+  if (!sb) {
+    setBodyError('pub-body', 'Supabase no está inicializado. Abre la consola del navegador para ver el detalle.');
+    return;
+  }
   try {
-    const { data, error } = await sb.from('eventos').select('*').order('created_at', { ascending: false });
+    const { data, error } = await sb
+      .from('eventos')
+      .select('*')
+      .order('created_at', { ascending: false });
     if (error) throw error;
-    events = data || [];
+    events = Array.isArray(data) ? data : [];
     renderTable('pub-body', false);
-  } catch(e) { setBodyError('pub-body', e.message); }
+  } catch(e) {
+    console.error('Error cargando eventos públicos:', e);
+    setBodyError('pub-body', 'Error al cargar eventos: ' + (e?.message || e));
+  }
 }
 
 async function loadAdminData() {
   setBodyLoading('admin-body');
+  if (!sb) {
+    setBodyError('admin-body', 'Supabase no está inicializado. Revisa la conexión y la consola del navegador.');
+    return;
+  }
   try {
-    const { data, error } = await sb.from('eventos').select('*').order('created_at', { ascending: false });
+    const { data, error } = await sb
+      .from('eventos')
+      .select('*')
+      .order('created_at', { ascending: false });
     if (error) throw error;
-    events = data || [];
+    events = Array.isArray(data) ? data : [];
     renderTable('admin-body', true);
+    updateStats();
     updateChart();
-  } catch(e) { setBodyError('admin-body', e.message); }
+    updateDashboard();
+  } catch(e) {
+    console.error('Error cargando eventos en administrador:', e);
+    setBodyError('admin-body', 'Error al cargar eventos: ' + (e?.message || e));
+  }
+}
+
+function parseFechaLocal(valor) {
+  if (!valor) return null;
+  const texto = String(valor).slice(0, 10);
+  const partes = texto.split('-');
+  if (partes.length === 3) {
+    const d = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  const d = new Date(valor);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function getFechaObjetivo(ev) {
+  return ev?.fecha_compromiso_extendida || ev?.fecha_compromiso || null;
+}
+
+function getDateFilterClass(valor){
+ const fecha=parseFechaLocal(valor); if(!fecha)return null;
+ const hoy=new Date();hoy.setHours(0,0,0,0);fecha.setHours(0,0,0,0);
+ const diff=Math.round((fecha-hoy)/86400000);
+ return diff<0?'atrasado':(diff<=3?'proximo':'normal');
+}
+function matchesDateFilter(ev,campo,filtro){
+  /*
+   * Cada selector de fecha debe evaluar exclusivamente su propia columna.
+   * No usamos resolveStatus() aquí porque ese estatus puede depender de la
+   * fecha extendida y terminar mezclando F. Compromiso con F. Extendida.
+   */
+  if(!filtro) return true;
+  return getDateFilterClass(ev?.[campo]) === filtro;
+}
+
+/*
+ * Semáforo visual de la fila.
+ * Devuelve únicamente las claves de color que buildRow() ya utiliza.
+ *
+ * Reglas:
+ *  - cerrado / finalizado / completado -> verde (CUMPLIDO)
+ *  - fecha vencida y no concluida       -> rojo (ATRASADO)
+ *  - fecha de hoy                       -> amarillo (HOY)
+ *  - fecha futura                       -> verde (EN TIEMPO)
+ *  - sin fecha válida                   -> azul (SIN FECHA)
+ *
+ * La función es deliberadamente autosuficiente: no depende de variables
+ * externas ni de funciones que puedan no existir.
+ */
+function getSemaforo(ev) {
+  const registro = ev || {};
+  const estatus = String(registro.estatus || '').trim().toLowerCase();
+
+  const concluido =
+    estatus === 'cerrado' ||
+    estatus === 'finalizado' ||
+    estatus === 'completado' ||
+    estatus === 'cumplido' ||
+    Boolean(registro.fecha_cierre);
+
+  if (concluido) return 'verde';
+
+  /*
+   * Para el semáforo se conserva la lógica del sistema: si existe una
+   * fecha extendida, esa es la fecha objetivo vigente; de lo contrario,
+   * se utiliza la fecha de compromiso.
+   */
+  const fecha = parseFechaLocal(
+    registro.fecha_compromiso_extendida || registro.fecha_compromiso
+  );
+
+  if (!fecha) return 'azul';
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+  fecha.setHours(0,0,0,0);
+
+  if (fecha.getTime() < hoy.getTime()) return 'rojo';
+  if (fecha.getTime() === hoy.getTime()) return 'amarillo';
+  return 'verde';
 }
 
 function renderTable(tbodyId, adminView) {
   const tbody = document.getElementById(tbodyId);
   if (!tbody) return;
 
-  const search = (adminView
-    ? document.getElementById('admin-search-input')
-    : document.getElementById('search-input'))?.value.toLowerCase() || '';
+  const prefijo = adminView ? 'admin' : 'pub';
+  const filtroId = document.getElementById(`${prefijo}-id-filter`)?.value.trim().toLowerCase() || '';
+  const filtroProceso = document.getElementById(`${prefijo}-proceso-filter`)?.value.trim().toLowerCase() || '';
+  const filtroArea = document.getElementById(`${prefijo}-area-filter`)?.value.trim().toLowerCase() || '';
+  const filtroCriticidad = document.getElementById(`${prefijo}-criticidad-filter`)?.value.trim().toLowerCase() || '';
+  const filtroResponsable = document.getElementById(`${prefijo}-responsable-filter`)?.value.trim().toLowerCase() || '';
+  const filtroCompromiso=document.getElementById(`${prefijo}-compromiso-filter`)?.value||'';
+  const filtroExtendida=document.getElementById(`${prefijo}-extendida-filter`)?.value||'';
+  const filtroEstatus = document.getElementById(`${prefijo}-estatus-filter`)?.value || '';
 
-  const filtered = events.filter(ev => {
+  let filtered = events.filter(ev => {
     if (!currentFilters.includes('all') && !currentFilters.includes(resolveStatus(ev))) return false;
-
-    if (search) {
-      const s = [ev.id, ev.proceso, ev.area, ev.responsable, ev.descripcion_evento, ev.plan_accion, ev.observacion]
-        .map(x => (x||'').toString().toLowerCase());
-      return s.some(x => x.includes(search));
-    }
+    if (filtroId && !String(ev.id || '').toLowerCase().includes(filtroId)) return false;
+    if (filtroProceso && !String(ev.proceso || '').toLowerCase().includes(filtroProceso)) return false;
+    if (filtroArea && !String(ev.area || '').toLowerCase().includes(filtroArea)) return false;
+    if (filtroCriticidad && !String(ev.criticidad || '').toLowerCase().includes(filtroCriticidad)) return false;
+    if (filtroResponsable && !String(ev.responsable || '').toLowerCase().includes(filtroResponsable)) return false;
+    if(filtroCompromiso&&!matchesDateFilter(ev,'fecha_compromiso',filtroCompromiso))return false;
+    if(filtroExtendida&&!matchesDateFilter(ev,'fecha_compromiso_extendida',filtroExtendida))return false;
+    if (filtroEstatus && resolveStatus(ev) !== filtroEstatus) return false;
     return true;
   });
 
+  /*
+   * En el perfil de Administrador las evidencias pendientes de aprobación
+   * siempre se muestran primero. Esto NO cambia los filtros ni el estatus
+   * del registro; únicamente cambia el orden visual de las filas.
+   *
+   * Se conserva el orden original para todos los registros que tienen el
+   * mismo nivel de prioridad (sort estable mediante el índice original).
+   */
+  if (adminView) {
+    filtered = filtered
+      .map((ev, index) => ({ ev, index, prioridad: resolveStatus(ev) === 'pendiente_aprobacion' ? 0 : 1 }))
+      .sort((a, b) => a.prioridad - b.prioridad || a.index - b.index)
+      .map(item => item.ev);
+  }
+
   if (!filtered.length) {
-    tbody.innerHTML = `<tr class="state-row"><td colspan="13" style="color:var(--text3)"><i class="fas fa-inbox" style="font-size:22px;margin-bottom:8px;display:block"></i>Sin eventos para mostrar</td></tr>`;
+    tbody.innerHTML = `<tr class="state-row"><td colspan="14" style="color:var(--text3)"><i class="fas fa-inbox" style="font-size:22px;margin-bottom:8px;display:block"></i>Sin eventos para mostrar</td></tr>`;
     return;
   }
 
@@ -1909,6 +2423,9 @@ function buildRow(ev, adminView) {
       actions += `<button class="btn btn-outline btn-sm" style="cursor:not-allowed;opacity:.5" disabled><i class="fas fa-ban"></i></button>`;
     }
     if (ev.evidencia_url) {
+      if (evidencePending(ev)) {
+        actions += `<span class="pending-evidence-note"><i class="fas fa-hourglass-half"></i> Pendiente de aprobación</span>`;
+      }
       const isEml = ev.evidencia_filename && ev.evidencia_filename.toLowerCase().endsWith('.eml');
       if (isEml) {
         actions += `<button class="btn btn-success btn-sm btn-icon" title="Ver correo" onclick="viewEmlEvidence('${esc(ev.evidencia_url)}', '${esc(ev.evidencia_filename||'')}')"><i class="fas fa-envelope"></i></button>`;
@@ -1926,6 +2443,10 @@ function buildRow(ev, adminView) {
       }
       actions += `<button class="btn btn-info btn-sm btn-icon" title="Descargar" onclick="downloadEvidence('${ev.id}','${esc(ev.evidencia_filename||'')}')"><i class="fas fa-download"></i></button>`;
       actions += `<button class="btn btn-primary btn-sm btn-icon" title="Eliminar evidencia" onclick="deleteEvidence('${ev.id}')"><i class="fas fa-trash"></i></button>`;
+      if (evidencePending(ev)) {
+        actions += `<button class="btn btn-success btn-sm btn-icon" title="Aprobar evidencia" onclick="approveEvidence('${ev.id}')"><i class="fas fa-check"></i></button>`;
+        actions += `<button class="btn btn-danger btn-sm btn-icon" title="Rechazar evidencia" onclick="rejectEvidence('${ev.id}')"><i class="fas fa-times"></i></button>`;
+      }
     }
     actions += `<button class="btn btn-gold btn-sm btn-icon" title="Observación" onclick="openObs('${ev.id}')"><i class="fas fa-comment"></i></button>`;
     actions += `<button class="btn btn-warning btn-sm btn-icon" title="Editar" onclick="editEvent('${ev.id}')"><i class="fas fa-edit"></i></button>`;
@@ -1941,7 +2462,7 @@ function buildRow(ev, adminView) {
     normal: ''
   }[sem];
 
-  return `<tr style="${rowStyle}">
+  return `<tr class="${status==='pendiente_aprobacion' ? 'row-pending-approval' : ''}" style="${rowStyle}">
     <td><span class="id-badge">${formatearId(ev.id)}</span></td>
     <td><span class="cell-text" title="${esc(ev.proceso||'')}">${esc(ev.proceso||'')}</span></td>
     <td><span class="cell-text" title="${esc(ev.area||'')}">${esc(ev.area||'')}</span></td>
@@ -1950,6 +2471,11 @@ function buildRow(ev, adminView) {
     <td>${expandCell(ev.id, plan, 'plan_accion')}</td>
     <td><span class="cell-text" title="${esc(ev.responsable||'')}">${esc(ev.responsable||'')}</span></td>
     <td><span style="font:500 12px var(--mono)">${fmtDate(ev.fecha_compromiso)}</span></td>
+    <td>
+  <span style="font:500 12px var(--mono)">
+    ${fmtDate(ev.fecha_compromiso_extendida)}
+  </span>
+</td>
     <td><span style="font:400 12px var(--mono);color:var(--text3)">${fmtDate(ev.ultima_actualizacion)}</span></td>
     <td>${expandCell(ev.id, obs, 'observacion')}</td>
     <td>${statusBadge}</td>
@@ -1964,99 +2490,44 @@ function buildRow(ev, adminView) {
   </tr>`;
 }
 
-function buildEffectivenessCell(ev, adminView) {
-  let html = '';
-
-  const fechaVal = calcFechaValidacion(ev.fecha_compromiso);
-  const fechaTxt = fechaVal ? fmtDate(fechaVal) : '—';
-
-  const hoy = new Date();
-  const vencido = fechaVal && fechaVal < hoy;
-
-  html += `<div style="display:flex;flex-direction:column;gap:6px">`;
-
-  html += `
-    <div style="
-      font-size:11px;
-      padding:3px 6px;
-      border-radius:4px;
-      background:${vencido ? '#FDECEA' : 'var(--gold-pale)'};
-      border:1px solid var(--border);
-      color:${vencido ? '#C62828' : 'var(--text)'};
-    ">
-      <i class="fas fa-calendar"></i>
-      Validar: <strong>${fechaTxt}</strong>
-      ${vencido ? ' ⚠️' : ''}
-    </div>
-  `;
-
-  html += `<div style="display:flex;gap:6px;flex-wrap:wrap">`;
-
-  if (ev.efectividad_url) {
-    html += `
-      <button class="btn btn-success btn-xs"
-        onclick="viewEvidence('${ev.efectividad_url}')">
-        <i class="fas fa-eye"></i>
-      </button>
-    `;
-
-    if (adminView) {
-      html += `
-        <button class="btn btn-info btn-xs"
-          onclick="downloadEffectiveness('${ev.id}','${ev.efectividad_filename || ''}')">
-          <i class="fas fa-download"></i>
-        </button>
-
-        <button class="btn btn-warning btn-xs"
-          onclick="deleteEffectiveness('${ev.id}')">
-          <i class="fas fa-trash"></i>
-        </button>
-      `;
-    }
-
-  } else {
-    html += `
-      <button class="btn btn-outline btn-xs"
-        style="margin-top:2px"
-        onclick="openUploadEffectiveness('${ev.id}')">
-        <i class="fas fa-upload"></i> Subir
-      </button>
-    `;
-  }
-
-  html += `</div></div>`;
-
-  return html;
+function buildEffectivenessCell(ev,adminView){
+ const fechaVal=calcFechaValidacion(getFechaObjetivo(ev)); const fechaTxt=fechaVal?fmtDate(fechaVal):'—'; const vencido=fechaVal?fechaVal<new Date():false;
+ let html=`<div class="effectiveness-cell"><div class="effectiveness-date"><i class="fas fa-calendar-check"></i><span>Validar: <strong>${fechaTxt}</strong></span>${vencido?'⚠️':''}</div><div class="effectiveness-actions">`;
+ if(ev.efectividad_url){
+  html+=`<button class="btn btn-success btn-xs" title="Ver evidencia" onclick="viewEvidence('${esc(ev.efectividad_url)}')"><i class="fas fa-eye"></i> Ver</button>`;
+  if(adminView){html+=`<button class="btn btn-info btn-xs" title="Descargar" onclick="downloadEffectiveness('${ev.id}','${esc(ev.efectividad_filename||'')}')"><i class="fas fa-download"></i></button>`;html+=`<button class="btn btn-warning btn-xs" title="Eliminar" onclick="deleteEffectiveness('${ev.id}')"><i class="fas fa-trash"></i></button>`;}
+ }else html+=`<button class="btn btn-outline btn-xs" title="Subir evidencia de efectividad" onclick="openUploadEffectiveness('${ev.id}')"><i class="fas fa-upload"></i> Subir</button>`;
+ return html+`</div></div>`;
 }
 
 function updateStats() {
-  const counts = { total: events.length, atrasado:0, en_proceso:0, cerrado:0, tbd:0 };
+  const counts = { total: events.length, atrasado:0, en_proceso:0, cerrado:0, pendiente_aprobacion:0, tbd:0 };
   events.forEach(ev => { const s = resolveStatus(ev); if (counts[s]!==undefined) counts[s]++; });
-  const pct = n => counts.total ? Math.round(n/counts.total*100)+'% del total' : '—';
-  document.getElementById('s-total').textContent = counts.total;
-  document.getElementById('s-atrasado').textContent = counts.atrasado;
-  document.getElementById('s-proceso').textContent = counts.en_proceso;
-  document.getElementById('s-cerrado').textContent = counts.cerrado;
-  document.getElementById('s-tbd').textContent = counts.tbd;
-  document.getElementById('s-atrasado-pct').textContent = pct(counts.atrasado);
-  document.getElementById('s-proceso-pct').textContent  = pct(counts.en_proceso);
-  document.getElementById('s-cerrado-pct').textContent  = pct(counts.cerrado);
-  document.getElementById('s-tbd-pct').textContent      = pct(counts.tbd);
+  const pct=n=>counts.total?Math.round(n/counts.total*100)+'% del total':'—'; const setText=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  setText('s-total',counts.total);
+  setText('s-atrasado',counts.atrasado);
+  setText('s-proceso',counts.en_proceso);
+  setText('s-cerrado',counts.cerrado);
+  setText('s-tbd',counts.tbd);
+  setText('s-atrasado-pct',pct(counts.atrasado));
+  setText('s-proceso-pct',pct(counts.en_proceso));
+  setText('s-cerrado-pct',pct(counts.cerrado));
+  setText('s-tbd-pct',pct(counts.tbd));
 }
 
 function updateChart() {
   const ctx = document.getElementById('status-chart');
   if (!ctx) return;
   if (chartInst) chartInst.destroy();
-  const c = { atrasado:0, en_proceso:0, cerrado:0, tbd:0 };
+  const c = { atrasado:0, en_proceso:0, cerrado:0, pendiente_aprobacion:0, tbd:0 };
   events.forEach(ev => { const s=resolveStatus(ev); if(c[s]!==undefined) c[s]++; });
   chartInst = new Chart(ctx.getContext('2d'), {
     type: 'doughnut',
     data: {
-      labels: ['Atrasados','En Proceso','Cerrados','TBD'],
-      datasets: [{ data: [c.atrasado,c.en_proceso,c.cerrado,c.tbd],
-        backgroundColor:['rgba(229,57,53,.8)','rgba(224,96,0,.8)','rgba(30,126,52,.8)','rgba(21,101,192,.8)'],
-        borderColor:['#E53935','#E06000','#1E7E34','#1565C0'], borderWidth:1.5 }]
+      labels: ['Atrasados','En Proceso','Cerrados','Pendientes','TBD'],
+      datasets: [{ data: [c.atrasado,c.en_proceso,c.cerrado,c.pendiente_aprobacion,c.tbd],
+        backgroundColor:['rgba(229,57,53,.8)','rgba(224,96,0,.8)','rgba(30,126,52,.8)','rgba(241,215,122,.95)','rgba(21,101,192,.8)'],
+        borderColor:['#E53935','#E06000','#1E7E34','#C9A227','#1565C0'], borderWidth:1.5 }]
     },
     options: {
       responsive:true, cutout:'62%',
@@ -2130,22 +2601,6 @@ function bindUI() {
     });
   });
 
-  document.getElementById('search-input')
-  ?.addEventListener('input', handleSearchSuggestions);
-
-  document.getElementById('admin-search-input')?.addEventListener('input', handleAdminSearchSuggestions);
-
-  ['search-input','admin-search-input'].forEach(id=>{
-    document.getElementById(id)?.addEventListener('keydown',e=>{
-      const box=document.getElementById(id==='search-input'?'search-suggestions':'admin-search-suggestions');
-      if(e.key==='Escape' && box) box.style.display='none';
-      if(e.key==='Enter' && box?.style.display==='block'){
-        const first=box.querySelector('.search-suggestion');
-        if(first){e.preventDefault();first.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,cancelable:true}));}
-      }
-    });
-  });
-
   document.getElementById('add-event-btn')?.addEventListener('click', () => openEventModal());
 
   document.getElementById('event-form')?.addEventListener('submit', async e => { e.preventDefault(); await saveEvent(); });
@@ -2177,6 +2632,18 @@ function bindUI() {
   document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
   document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', e => { if(e.target===ov) closeModal(ov.id); }));
 
+[
+  'pub-id-filter','pub-proceso-filter','pub-area-filter','pub-criticidad-filter',
+  'pub-responsable-filter','pub-compromiso-filter','pub-extendida-filter','pub-estatus-filter',
+  'admin-id-filter','admin-proceso-filter','admin-area-filter','admin-criticidad-filter',
+  'admin-responsable-filter','admin-compromiso-filter','admin-extendida-filter','admin-estatus-filter'
+].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', renderBoth);
+  el.addEventListener('change', renderBoth);
+});
+
   const dashFilters = [
   'dash-area',
   'dash-proceso',
@@ -2189,14 +2656,6 @@ function bindUI() {
     document.getElementById(id)?.addEventListener('input', updateDashboard);
   });
 
-  document.addEventListener('click', function(e){
-    const publicBox = document.getElementById('search-suggestions');
-    const adminBox = document.getElementById('admin-search-suggestions');
-    const publicWrap = document.getElementById('search-input')?.closest('.search-wrap');
-    const adminWrap = document.getElementById('admin-search-input')?.closest('.search-wrap');
-    if (publicBox && publicWrap && !publicWrap.contains(e.target)) publicBox.style.display = 'none';
-    if (adminBox && adminWrap && !adminWrap.contains(e.target)) adminBox.style.display = 'none';
-  });
 }
 
 async function doLogin() {
@@ -2243,6 +2702,10 @@ function openEventModal(id = null) {
     document.getElementById('f-plan').value      = ev.plan_accion || '';
     document.getElementById('f-responsable').value= ev.responsable || '';
     document.getElementById('f-fecha').value     = ev.fecha_compromiso || '';
+    document.getElementById(
+'f-fecha-extendida'
+).value =
+ev.fecha_compromiso_extendida || '';
     document.getElementById('f-estatus').value   = ev.estatus || 'en_proceso';
   } else {
     document.getElementById('event-modal-title').textContent = 'Nuevo evento';
@@ -2267,7 +2730,10 @@ async function saveEvent() {
     responsable: document.getElementById('f-responsable').value,
     fecha_compromiso: document.getElementById('f-fecha').value,
     estatus: document.getElementById('f-estatus').value,
-    ultima_actualizacion: new Date().toISOString()
+    ultima_actualizacion: new Date().toISOString(),
+    fecha_compromiso_extendida: document.getElementById('f-fecha-extendida').value || null,
+    fecha_cierre: document.getElementById('f-estatus').value === 'cerrado' ? (events.find(e => e.id == id)?.fecha_cierre || new Date().toISOString()) : null,
+    
   };
 
   try {
@@ -2278,6 +2744,8 @@ async function saveEvent() {
       const newId = await generarNuevoId();
 
       const { error } = await sb.from('eventos').insert([{
+        fecha_compromiso_original:
+document.getElementById('f-fecha').value,
         id: newId,
         ...payload,
         observacion:'',
@@ -2381,30 +2849,45 @@ async function doUpload() {
 }
 
   const ext = file.name.split('.').pop().toLowerCase();
-  const allowedExts = [
-  'pdf',
-  'jpg',
-  'jpeg',
-  'png',
-  'webp',
-  'doc',
-  'docx',
-  'xls',
-  'xlsx',
-  'ppt',
-  'pptx',
-  'csv',
-  'txt',
-  'zip',
-  'rar',
-  '7z',
-  'msg',
-  'eml'
-];
-  if (!allowedExts.includes(ext)) { 
-    setNotice('upload-notice','error','Tipo de archivo no permitido'); 
-    return; 
+
+  // La validación se hace por extensión, porque varios navegadores asignan
+  // MIME vacío o incorrecto a archivos como .eml, .msg, .rar y .7z.
+  // De esta forma no rechazamos un archivo válido solo porque el navegador
+  // informó un MIME diferente.
+  const allowedExts = new Set([
+    'pdf','jpg','jpeg','png','webp',
+    'doc','docx','xls','xlsx','ppt','pptx',
+    'csv','txt','zip','rar','7z','msg','eml'
+  ]);
+
+  if (!allowedExts.has(ext)) {
+    setNotice('upload-notice','error',`Tipo de archivo no permitido: .${ext || 'sin extensión'}`);
+    return;
   }
+
+  // MIME explícito para evitar que Storage rechace extensiones que algunos
+  // navegadores mandan como application/octet-stream o con MIME vacío.
+  const mimeByExt = {
+    pdf:'application/pdf',
+    jpg:'image/jpeg',
+    jpeg:'image/jpeg',
+    png:'image/png',
+    webp:'image/webp',
+    doc:'application/msword',
+    docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls:'application/vnd.ms-excel',
+    xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt:'application/vnd.ms-powerpoint',
+    pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    csv:'text/csv',
+    txt:'text/plain',
+    zip:'application/zip',
+    rar:'application/vnd.rar',
+    '7z':'application/x-7z-compressed',
+    msg:'application/vnd.ms-outlook',
+    eml:'message/rfc822'
+  };
+  const contentType = mimeByExt[ext] || file.type || 'application/octet-stream';
 
   const ev = events.find(e => e.id == id);
   if (!ev) { setNotice('upload-notice','error','Evento no encontrado'); return; }
@@ -2415,7 +2898,11 @@ async function doUpload() {
   document.getElementById('upload-submit').disabled = true;
 
   try {
-    const { error: upErr } = await sb.storage.from('evidencias').upload(fileName, file, { cacheControl:'3600', upsert:false });
+    const { error: upErr } = await sb.storage.from('evidencias').upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: contentType
+    });
     if (upErr) throw upErr;
 
     const { data: urlData } = sb.storage.from('evidencias').getPublicUrl(fileName);
@@ -2430,20 +2917,22 @@ async function doUpload() {
     } else {
       updPayload.evidencia_url = urlData.publicUrl;
       updPayload.evidencia_filename = fileName;
-
-      if (ev.estatus === 'atrasado' || ev.estatus === 'en_proceso') {
-        updPayload.estatus = 'cerrado';
-      }
+      // La evidencia del responsable queda pendiente hasta que el administrador la apruebe.
     }
 
     const { error: updErr } = await sb.from('eventos').update(updPayload).eq('id', id);
     if (updErr) throw updErr;
 
-    setNotice('upload-notice','success','¡Evidencia subida correctamente!');
+    setNotice('upload-notice','success', window.isUploadingEffectiveness ? '¡Evidencia de efectividad subida correctamente!' : '¡Evidencia enviada! Quedó pendiente de aprobación del administrador.');
     setTimeout(async () => { closeModal('upload-modal'); await loadPublicData(); if(isAdmin) await loadAdminData(); }, 1800);
     window.isUploadingEffectiveness = false;
   } catch(e) {
-    setNotice('upload-notice','error', e.message);
+    console.error('Error al subir evidencia:', e);
+    let msg = e?.message || 'No fue posible subir el archivo.';
+    if (/mime|type|content.?type|not.?allowed|unsupported/i.test(msg)) {
+      msg += ' Verifica que el archivo tenga una de las extensiones permitidas.';
+    }
+    setNotice('upload-notice','error', msg);
   } finally { document.getElementById('upload-submit').disabled = false; }
 }
 
@@ -2591,6 +3080,27 @@ async function downloadEvidence(id, filename) {
   } catch(e) { alert('Error al descargar: '+e.message); }
 }
 
+async function downloadEffectiveness(id, filename) {
+  try {
+    if (!filename) throw new Error('No existe un archivo de efectividad para descargar.');
+    const { data, error } = await sb.storage.from('evidencias').download(filename);
+    if (error) throw error;
+
+    const url = URL.createObjectURL(data);
+    const a = Object.assign(document.createElement('a'), {
+      href: url,
+      download: filename
+    });
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch(e) {
+    alert('Error al descargar: ' + e.message);
+  }
+}
+
 async function deleteEvidence(id) {
   if (!confirm('¿Eliminar evidencia?')) return;
 
@@ -2627,6 +3137,37 @@ async function deleteEvidence(id) {
   } catch (e) {
     alert('Error: ' + e.message);
   }
+}
+
+async function approveEvidence(id) {
+  if (!isAdmin) { alert('Solo el administrador puede aprobar evidencias.'); return; }
+  const ev = events.find(e => e.id == id);
+  if (!evidencePending(ev)) { alert('La evidencia no está pendiente de aprobación.'); return; }
+  if (!confirm(`¿Aprobar la evidencia del evento ${ev.id}?\n\nAl aprobarla, el evento quedará como CERRADO.`)) return;
+  try {
+    const ahora = new Date().toISOString();
+    const { error } = await sb.from('eventos').update({ estatus:'cerrado', fecha_cierre:ahora, ultima_actualizacion:ahora }).eq('id',id);
+    if(error) throw error;
+    await loadAdminData(); await loadPublicData();
+  } catch(e) { alert('Error al aprobar la evidencia: '+e.message); }
+}
+
+async function rejectEvidence(id) {
+  if (!isAdmin) { alert('Solo el administrador puede rechazar evidencias.'); return; }
+  const ev = events.find(e => e.id == id);
+  if (!evidencePending(ev)) { alert('La evidencia no está pendiente de aprobación.'); return; }
+  const motivo = prompt('Motivo del rechazo (opcional):','Evidencia no cumple con lo requerido');
+  if(motivo===null) return;
+  try {
+    if(ev.evidencia_filename) { const {error:storageError}=await sb.storage.from('evidencias').remove([ev.evidencia_filename]); if(storageError) console.warn('No se pudo eliminar el archivo rechazado:',storageError.message); }
+    const ahora=new Date().toISOString();
+    const nota=`Evidencia rechazada por Administrador${motivo?': '+motivo:'.'}`;
+    const observacionAnterior=ev.observacion?ev.observacion.trim():'';
+    const observacion=observacionAnterior?`${observacionAnterior}\n${nota}`:nota;
+    const {error}=await sb.from('eventos').update({ evidencia_url:null, evidencia_filename:null, estatus:ev.estatus==='cerrado'?'en_proceso':ev.estatus, fecha_cierre:null, observacion, ultima_actualizacion:ahora }).eq('id',id);
+    if(error) throw error;
+    await loadAdminData(); await loadPublicData();
+  } catch(e) { alert('Error al rechazar la evidencia: '+e.message); }
 }
 
 async function deleteEffectiveness(id) {
@@ -2875,82 +3416,20 @@ function showEmailStatus(msg, type) {
   el.textContent = msg;
 }
 
-function resolveStatus(ev) {
-  if (ev.estatus === 'cerrado') return 'cerrado';
-  if (ev.estatus === 'tbd') return 'tbd';
-  const today = new Date();
-  if (ev.fecha_compromiso) {
-    const d = new Date(ev.fecha_compromiso);
-    if (d < today && !ev.evidencia_url) return 'atrasado';
-  }
-  if (ev.estatus === 'atrasado') return 'atrasado';
-  return 'en_proceso';
+function evidencePending(ev) {
+  // La columna evidencia_estado no existe en Supabase; el estado se determina con evidencia_url/evidencia_filename y estatus.
+  // La evidencia pendiente se identifica por: archivo cargado + evento aún no cerrado.
+  return !!(ev?.evidencia_url && ev?.evidencia_filename && String(ev?.estatus || '').toLowerCase() !== 'cerrado');
 }
 
-function getSemaforo(ev) {
-  const hoy = new Date();
-
-  if (ev.estatus === 'cerrado') return 'verde';
-  if (ev.estatus === 'tbd') return 'azul';
-
-  if (!ev.fecha_compromiso) return 'normal';
-
-  const fecha = new Date(ev.fecha_compromiso);
-
-  if (fecha < hoy && !ev.evidencia_url) return 'rojo';
-
-  const diff = (fecha - hoy) / (1000 * 60 * 60 * 24);
-  if (diff <= 3 && diff >= 0) return 'amarillo';
-
-  return 'normal';
+function resolveStatus(ev){
+ if(evidencePending(ev)) return 'pendiente_aprobacion';
+ if(ev?.estatus==='cerrado')return'cerrado'; if(ev?.estatus==='tbd')return'tbd';
+ const f=parseFechaLocal(getFechaObjetivo(ev)); if(f){const h=new Date();h.setHours(0,0,0,0);f.setHours(0,0,0,0);if(f<h&&!ev.evidencia_url)return'atrasado';}
+ if(ev?.estatus==='atrasado')return'atrasado'; return'en_proceso';
 }
-
-function statusHTML(s, ev = null) {
-  let icon = '';
-  let txt = '';
-  let cls = '';
-
-  if (s === 'cerrado') {
-    icon = '✅';
-    txt = 'Cerrado';
-    cls = 'badge-cerrado';
-  } 
-  else if (s === 'atrasado') {
-    icon = '🔴';
-    txt = 'Atrasado';
-    cls = 'badge-atrasado';
-  } 
-  else if (s === 'tbd') {
-    icon = '🔵';
-    txt = 'TBD';
-    cls = 'badge-tbd';
-  } 
-  else {
-    if (ev && ev.fecha_compromiso) {
-      const hoy = new Date();
-      const fecha = new Date(ev.fecha_compromiso);
-      const diff = (fecha - hoy) / (1000 * 60 * 60 * 24);
-
-      if (diff <= 3 && diff >= 0) {
-        icon = '🟡';
-        txt = 'Próximo';
-        cls = 'badge-proceso';
-      } else {
-        icon = '🟡';
-        txt = 'En proceso';
-        cls = 'badge-proceso';
-      }
-
-    } else {
-      icon = '🟡';
-      txt = 'En proceso';
-      cls = 'badge-proceso';
-    }
-  }
-
-  return `<span class="badge ${cls}">${icon} ${txt}</span>`;
-}
-
+function getDaysFromToday(fecha){const d=parseFechaLocal(fecha);if(!d)return null;const h=new Date();h.setHours(0,0,0,0);d.setHours(0,0,0,0);return Math.round((d-h)/86400000);}
+function statusHTML(s,ev=null){let icon='',txt='',detail='',cls='';if(s==='cerrado'){icon='✅';txt=getCierreTexto(ev);cls='badge-cerrado';}else if(s==='pendiente_aprobacion'){icon='🟡';txt='Pendiente de aprobación';detail='Evidencia enviada';cls='badge-pendiente';}else if(s==='atrasado'){icon='🔴';const d=getDaysFromToday(getFechaObjetivo(ev));txt=d===null?'Atrasado':`Atrasado ${Math.abs(d)} ${Math.abs(d)===1?'día':'días'}`;cls='badge-atrasado';}else if(s==='tbd'){icon='🔵';txt='TBD';cls='badge-tbd';}else{icon='🟡';txt='En proceso';const d=getDaysFromToday(getFechaObjetivo(ev));detail=d===null?'Sin fecha objetivo':d===0?'Se atrasa hoy':d===1?'Falta 1 día':d>1?`Faltan ${d} días`:'Fecha vencida';cls='badge-proceso';}return `<div class="status-detail"><span class="badge ${cls}">${icon} ${txt}</span>${detail?`<small>${detail}</small>`:''}</div>`;}
 function criticHTML(c) {
   if (!c) return '<span class="badge badge-menor">—</span>';
   const map = { Mayor:'mayor', Menor:'menor', Critica:'critica', 'Observación':'observacion', Observacion:'observacion' };
@@ -2961,8 +3440,9 @@ function criticHTML(c) {
 function calcFechaValidacion(fechaCompromiso) {
   if (!fechaCompromiso) return null;
 
-  const d = new Date(fechaCompromiso);
-  d.setDate(d.getDate() + 90);
+  const d = parseFechaLocal(fechaCompromiso);
+  if(!d)return null;
+  d.setDate(d.getDate()+90);
 
   return d;
 }
@@ -2983,17 +3463,21 @@ function esc(str) {
 }
 
 function getStatusText(s) {
-  return { cerrado:'Cerrado', atrasado:'Atrasado', en_proceso:'En Proceso', tbd:'TBD' }[s] || s;
+  return { cerrado:'Cerrado', atrasado:'Atrasado', en_proceso:'En Proceso', pendiente_aprobacion:'Pendiente de aprobación', tbd:'TBD' }[s] || s;
+}
+
+function getCierreTexto(ev){
+ if(ev?.estatus!=='cerrado')return'Cerrado'; const cierre=parseFechaLocal(ev.fecha_cierre||ev.ultima_actualizacion),meta=parseFechaLocal(getFechaObjetivo(ev)); if(!cierre||!meta)return'Cerrado'; const d=Math.round((cierre-meta)/86400000); if(d>0)return`Cerrado ${d} ${d===1?'día':'días'} después`; if(d<0)return`Cerrado ${Math.abs(d)} ${Math.abs(d)===1?'día':'días'} antes`; return'Cerrado a tiempo';
 }
 
 function setBodyLoading(id) {
   const el = document.getElementById(id);
-  if (el) el.innerHTML = `<tr class="state-row"><td colspan="13"><div class="spinner"></div>Cargando eventos…</td></tr>`;
+  if (el) el.innerHTML = `<tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>`;
 }
 
 function setBodyError(id, msg) {
   const el = document.getElementById(id);
-  if (el) el.innerHTML = `<tr class="state-row"><td colspan="13" style="color:#C62828"><i class="fas fa-exclamation-triangle" style="font-size:22px;display:block;margin-bottom:8px"></i>${msg}</td></tr>`;
+  if (el) el.innerHTML = `<tr class="state-row"><td colspan="14" style="color:#C62828"><i class="fas fa-exclamation-triangle" style="font-size:22px;display:block;margin-bottom:8px"></i>${msg}</td></tr>`;
 }
 
 function setNotice(id, type, msg) {
@@ -3082,187 +3566,14 @@ function formatearId(id) {
   return 'MP-' + String(numero).slice(-4).padStart(4, '0');
 }
 
-function getFilteredEvents() {
-  const area = document.getElementById('dash-area')?.value.toLowerCase() || '';
-  const resp = document.getElementById('dash-resp')?.value.toLowerCase() || '';
-  const status = document.getElementById('dash-status')?.value || '';
-  const month = document.getElementById('dash-month')?.value;
-  const proceso =
-  document.getElementById('dash-proceso')
-  ?.value.toLowerCase() || '';
-
-  return events.filter(ev => {
-
-    if (area && !(ev.area || '').toLowerCase().includes(area)) return false;
-
-    if (
-  proceso &&
-  !(ev.proceso || '').toLowerCase().includes(proceso)
-)
-  return false;
-
-    if (resp && !(ev.responsable || '').toLowerCase().includes(resp)) return false;
-
-    if (status && resolveStatus(ev) !== status) return false;
-
-    if (month !== '' && ev.fecha_compromiso) {
-      const d = new Date(ev.fecha_compromiso);
-      if (d.getMonth().toString() !== month) return false;
-    }
-
-    return true;
-  });
-}
-
-function updateDashboard() {
-  const data = getFilteredEvents();
-  updateDashboardCharts(data);
-}
-
-function loadAutocompleteOptions() {
-const areas = new Set();
-const respons = new Set();
-const procesos = new Set();
-
-events.forEach(ev => {
-  if (ev.area) areas.add(ev.area);
-
-  if (ev.proceso)
-    procesos.add(ev.proceso);
-
-  if (ev.responsable)
-    respons.add(ev.responsable);
-});
-
-  const areaList = document.getElementById('areas-list');
-  areaList.innerHTML = [...areas]
-    .sort()
-    .map(a => `<option value="${a}">`)
-    .join('');
-
-
-  const procesoList =
-  document.getElementById('proceso-list');
-
-procesoList.innerHTML = [...procesos]
-  .sort()
-  .map(p => `<option value="${p}">`)
-  .join('');
-
-  const respList = document.getElementById('resp-list');
-  respList.innerHTML = [...respons]
-    .sort()
-    .map(r => `<option value="${r}">`)
-    .join('');
-}
-
-function clearDashboardFilters() {
-  document.getElementById('dash-area').value = '';
-  document.getElementById('dash-resp').value = '';
-  document.getElementById('dash-status').value = '';
-  document.getElementById('dash-month').value = '';
-  document.getElementById('dash-proceso').value = '';
-
-  updateDashboard();
-}
-
-function updateDashboardCharts(data) {
-  const statusCount = { atrasado:0, en_proceso:0, cerrado:0, tbd:0 };
-  const areaCount = {};
-  const respCount = {};
-
-  data.forEach(ev => {
-
-    const s = resolveStatus(ev);
-    if (statusCount[s] !== undefined) statusCount[s]++;
-
-    const a = ev.area || '—';
-    areaCount[a] = (areaCount[a] || 0) + 1;
-
-    const r = ev.responsable || '—';
-    respCount[r] = (respCount[r] || 0) + 1;
-  });
-
-  const total = data.length;
-  const atrasado = statusCount.atrasado;
-  const cerrado = statusCount.cerrado;
-  const cumplimiento = total ? Math.round((cerrado / total) * 100) : 0;
-
-  document.getElementById('dash-total').textContent = total;
-  document.getElementById('dash-atrasado').textContent = atrasado;
-  document.getElementById('dash-cerrado').textContent = cerrado;
-  document.getElementById('dash-cumplimiento').textContent = cumplimiento + '%';
-
-  renderChart('chart-status', statusCount, 'doughnut');
-  renderChart('chart-area', areaCount, 'bar');
-  renderChart('chart-resp', respCount, 'bar');
-}
-
-let dashCharts = {};
-
-function renderChart(id, obj, type) {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-
-  if (dashCharts[id]) {
-    dashCharts[id].destroy();
-  }
-
-  const entries = Object.entries(obj)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
-  const labels = entries.map(e => e[0]);
-  const data = entries.map(e => e[1]);
-
-  dashCharts[id] = new Chart(ctx, {
-    plugins: [ChartDataLabels],
-    type: type,
-    cutout: type === 'doughnut' ? '65%' : undefined,
-    data: {
-      labels: labels,
-      datasets: [{
-        barThickness: 34,
-        borderRadius: 6,
-        data: data,
-        backgroundColor: [
-          '#CF002E',
-          '#E06000',
-          '#1E7E34',
-          '#1565C0',
-          '#6A0DAD',
-          '#FDD000'
-        ]
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        datalabels: {
-          anchor: 'center',
-          align: 'center',
-          color: '#ffffff',
-          font: {
-            weight: 'bold',
-            size: 12
-          },
-          formatter: (value) => value
-        }
-      }
-    },
-    scales: {
-      x: {
-        display: false
-      },
-      y: {
-        grid: { display: false }
-      }
-    }
-  });
-}
+function getFilteredEvents(){const area=document.getElementById('dash-area')?.value.toLowerCase()||'',resp=document.getElementById('dash-resp')?.value.toLowerCase()||'',status=document.getElementById('dash-status')?.value||'',month=document.getElementById('dash-month')?.value,proceso=document.getElementById('dash-proceso')?.value.toLowerCase()||'';return events.filter(ev=>{if(area&&!(ev.area||'').toLowerCase().includes(area))return false;if(proceso&&!(ev.proceso||'').toLowerCase().includes(proceso))return false;if(resp&&!(ev.responsable||'').toLowerCase().includes(resp))return false;if(status&&resolveStatus(ev)!==status)return false;if(month!==''){const d=parseFechaLocal(getFechaObjetivo(ev));if(!d||d.getMonth().toString()!==month)return false;}return true;});}
+function updateDashboard(){updateDashboardCharts(getFilteredEvents());}
+function loadAutocompleteOptions(){const a=new Set(),r=new Set(),p=new Set();events.forEach(ev=>{if(ev.area)a.add(ev.area);if(ev.responsable)r.add(ev.responsable);if(ev.proceso)p.add(ev.proceso);});const fill=(id,set)=>{const el=document.getElementById(id);if(el)el.innerHTML=[...set].sort().map(v=>`<option value="${esc(v)}">`).join('');};fill('areas-list',a);fill('resp-list',r);fill('proceso-list',p);}
+function clearDashboardFilters(){['dash-area','dash-resp','dash-status','dash-month','dash-proceso'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});updateDashboard();}
+function updateDashboardCharts(data){const sc={atrasado:0,en_proceso:0,cerrado:0,pendiente_aprobacion:0,tbd:0},ac={},rc={},oa={},or={};data.forEach(ev=>{const st=resolveStatus(ev);if(sc[st]!==undefined)sc[st]++;const a=ev.area||'Sin área',r=ev.responsable||'Sin responsable';ac[a]=(ac[a]||0)+1;rc[r]=(rc[r]||0)+1;if(st==='atrasado'){oa[a]=(oa[a]||0)+1;or[r]=(or[r]||0)+1;}});const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};set('dash-total',data.length);set('dash-atrasado',sc.atrasado);set('dash-cerrado',sc.cerrado);set('dash-cumplimiento',(data.length?Math.round(sc.cerrado/data.length*100):0)+'%');renderChart('chart-status',sc,'doughnut');renderChart('chart-area',ac,'bar');renderChart('chart-resp',rc,'bar');renderChart('chart-overdue-area',oa,'bar');renderChart('chart-overdue-resp',or,'bar');renderMonthlyComplianceChart(data);}
+let dashCharts={};
+function renderChart(id,obj,type){const ctx=document.getElementById(id);if(!ctx||typeof Chart==='undefined')return;if(dashCharts[id])dashCharts[id].destroy();const e=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,10);dashCharts[id]=new Chart(ctx,{type,data:{labels:e.map(x=>x[0]),datasets:[{data:e.map(x=>x[1]),backgroundColor:['#CF002E','#E06000','#1E7E34','#1565C0','#6A0DAD','#FDD000','#7B8491','#8F001F','#2E7D32','#1769C2'],borderRadius:6,borderWidth:0}]},options:{indexAxis:type==='bar'?'y':undefined,responsive:true,maintainAspectRatio:false,cutout:type==='doughnut'?'65%':undefined,plugins:{legend:{display:type==='doughnut',position:'bottom'},datalabels:{display:true,color:'#fff',font:{weight:'700',size:11},formatter:v=>v}},scales:type==='bar'?{x:{beginAtZero:true,grid:{display:false},ticks:{precision:0}},y:{grid:{display:false}}}:{}}});}
+function renderMonthlyComplianceChart(data){const ctx=document.getElementById('chart-monthly-compliance');if(!ctx||typeof Chart==='undefined')return;if(dashCharts['chart-monthly-compliance'])dashCharts['chart-monthly-compliance'].destroy();const g={};data.forEach(ev=>{const t=parseFechaLocal(getFechaObjetivo(ev));if(!t)return;const k=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}`;if(!g[k])g[k]={total:0,aTiempo:0};g[k].total++;if(resolveStatus(ev)==='cerrado'){const c=parseFechaLocal(ev.fecha_cierre||ev.ultima_actualizacion);if(c&&c<=t)g[k].aTiempo++;}});const keys=Object.keys(g).sort().slice(-12),labels=keys.map(k=>{const[y,m]=k.split('-');return new Date(+y,+m-1,1).toLocaleDateString('es-MX',{month:'short',year:'2-digit'});}),vals=keys.map(k=>g[k].total?Math.round(g[k].aTiempo/g[k].total*100):0);dashCharts['chart-monthly-compliance']=new Chart(ctx,{type:'line',data:{labels,datasets:[{data:vals,borderColor:'#16763A',backgroundColor:'rgba(22,118,58,.12)',fill:true,tension:.3,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}},plugins:{legend:{display:false},datalabels:{display:true,align:'top',color:'#16763A',font:{weight:'700'},formatter:v=>v+'%'}}}});}
 
 async function generarNuevoId() {
   const numeros = events.map(function(ev) {
@@ -3278,70 +3589,6 @@ async function generarNuevoId() {
 
 function normalizeSearchValue(value) {
   return (value || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-}
-
-function getSearchSuggestions(value) {
-  const q = normalizeSearchValue(value);
-  if (!q) return [];
-  const seen = new Set();
-  const result = [];
-  const fields = [['id','ID'],['proceso','Proceso'],['area','Área'],['responsable','Responsable']];
-  events.forEach(ev => fields.forEach(([key,label]) => {
-    const raw = (ev[key] ?? '').toString().trim();
-    if (!raw) return;
-    const normalized = normalizeSearchValue(raw);
-    if (!normalized.includes(q)) return;
-    const unique = key + '::' + normalized;
-    if (seen.has(unique)) return;
-    seen.add(unique);
-    result.push({text:raw,type:label,key});
-  }));
-  return result.sort((a,b) => {
-    const ae=normalizeSearchValue(a.text).startsWith(q)?0:1;
-    const be=normalizeSearchValue(b.text).startsWith(q)?0:1;
-    return ae-be || a.text.localeCompare(b.text,'es',{sensitivity:'base'});
-  }).slice(0,10);
-}
-
-function renderSearchSuggestions(inputId, boxId) {
-  const input=document.getElementById(inputId), box=document.getElementById(boxId);
-  if(!input || !box) return;
-  const value=input.value.trim(), matches=getSearchSuggestions(value);
-  if(!value || !matches.length){box.innerHTML='';box.style.display='none';return;}
-  box.innerHTML=matches.map((item,index)=>`
-    <div class="search-suggestion" role="option" tabindex="0" data-index="${index}">
-      <i class="fas ${item.key==='id'?'fa-hashtag':item.key==='area'?'fa-building':item.key==='responsable'?'fa-user':'fa-diagram-project'}"></i>
-      <span class="suggestion-main">${esc(item.text)}</span>
-      <span class="suggestion-meta">${esc(item.type)}</span>
-    </div>`).join('');
-  box.querySelectorAll('.search-suggestion').forEach((el,index)=>{
-    const item=matches[index];
-    el.addEventListener('mousedown',e=>{
-      e.preventDefault();
-      input.value=item.text;
-      box.style.display='none';
-      renderTable(inputId==='search-input'?'pub-body':'admin-body',inputId!=='search-input');
-    });
-  });
-  box.style.display='block';
-}
-
-function handleSearchSuggestions(){
-  renderTable('pub-body',false);
-  renderSearchSuggestions('search-input','search-suggestions');
-}
-
-function handleAdminSearchSuggestions(){
-  renderTable('admin-body',true);
-  renderSearchSuggestions('admin-search-input','admin-search-suggestions');
-}
-
-function selectSuggestion(text){
-  const input=document.getElementById('search-input'),box=document.getElementById('search-suggestions');
-  if(!input)return;
-  input.value=text;
-  if(box)box.style.display='none';
-  renderTable('pub-body',false);
 }
 
 </script>
